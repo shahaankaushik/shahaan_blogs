@@ -79,11 +79,16 @@ export default function Home() {
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <div className="small-button bg-card text-foreground border-2 border-primary/30 px-4 py-2 text-base lowercase opacity-100 shadow-xl">
-                  {blogInfo?.intro || "yo i'm shahaan :) "}
+              <div className="flex flex-col items-center gap-4">
+                <div className="small-button bg-card/90 backdrop-blur-md text-foreground border-2 border-primary/30 px-8 py-3 text-2xl lowercase opacity-100 shadow-2xl tracking-tight">
+                  shahaan's blog
                 </div>
-                {user && <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity bg-primary/20" onClick={() => setEditing('intro')}><Edit2 className="h-3 w-3" /></Button>}
+                <div className="flex items-center gap-2">
+                  <div className="small-button bg-card/80 backdrop-blur-sm text-foreground border border-primary/20 px-4 py-2 text-base lowercase opacity-100 shadow-xl">
+                    {blogInfo?.intro || "yo i'm shahaan :) "}
+                  </div>
+                  {user && <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity bg-primary/20" onClick={() => setEditing('intro')}><Edit2 className="h-3 w-3" /></Button>}
+                </div>
               </div>
             )}
           </div>

@@ -84,13 +84,15 @@ export default function PostDetail() {
         </nav>
 
         <main className="space-y-8">
-          <header className="text-center space-y-4">
-            <h1 className="text-3xl font-normal leading-tight lowercase">{post.title}</h1>
-            <div className="flex justify-center">
-              <div className="small-button bg-card/80 backdrop-blur-sm border border-primary/20 px-3 py-1 text-[10px] text-muted-foreground lowercase shadow-sm">
-                {format(new Date(post.createdAt), 'MMMM d, yyyy')}
-              </div>
+          <header className="text-center space-y-6">
+          <div className="flex justify-center">
+            <h1 className="small-button bg-card/90 backdrop-blur-md border-2 border-primary/30 px-6 py-3 text-3xl font-normal leading-tight lowercase shadow-2xl">{post.title}</h1>
+          </div>
+          <div className="flex justify-center">
+            <div className="small-button bg-card/80 backdrop-blur-sm border border-primary/20 px-3 py-1 text-[10px] text-muted-foreground lowercase shadow-sm">
+              {format(new Date(post.createdAt), 'MMMM d, yyyy')}
             </div>
+          </div>
             
             {post.imageUrl && (
               <div className="rounded-2xl overflow-hidden border-2 border-primary/20 shadow-xl">
