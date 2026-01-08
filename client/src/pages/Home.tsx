@@ -1,135 +1,223 @@
-import { usePosts } from "@/hooks/use-blog";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { api, buildUrl } from "@/lib/api";
+import { queryClient } from "@/lib/queryClient";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
+import { Edit2, Save, X, Heart, MessageCircle, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Link } from "wouter";
-import { format } from "date-fns";
 import { CreatePostModal } from "@/components/CreatePostModal";
-import { SectionToggle } from "@/components/SectionToggle";
-import { ArrowRight, Film, Trophy, Heart, ExternalLink, Activity, Cat, PenTool, Dumbbell, Palette, Globe } from "lucide-react";
 
 export default function Home() {
-  const { data: posts, isLoading } = usePosts();
   const { user } = useAuth();
+  const [editing, setEditing] = useState<string | null>(null);
+  const [showLikes, setShowLikes] = useState(false);
+  const [showExpect, setShowExpect] = useState(false);
+
+  const { data: blogInfo, isLoading: infoLoading } = useQuery({
+    queryKey: ["/api/blog-info"],
+  });
+
+  const { data: posts, isLoading: postsLoading } = useQuery({
+    queryKey: ["/api/posts"],
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (updates: any) => {
+      const res = await fetch("/api/blog-info", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/blog-info"] });
+      setEditing(null);
+    },
+  });
+
+  if (infoLoading || postsLoading) {
+    return (
+      <div className="max-w-2xl mx-auto p-8 space-y-4">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+      </div>
+    );
+  }
+
+  const handleUpdate = (field: string, value: string) => {
+    updateMutation.mutate({ [field]: value });
+  };
 
   return (
-    <div className="min-h-screen pb-20">
-      {/* Hero Section */}
-      <header className="pt-20 pb-12 px-4 md:px-6 max-w-4xl mx-auto">
-        <h1 className="text-6xl md:text-8xl font-display text-primary leading-[0.85] mb-6 drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]">
-          Yo I’m<br />
-          <span className="text-white">Shahaan</span>
-        </h1>
-        <p className="text-xl md:text-2xl text-white/80 font-light max-w-lg mb-12">
-          And this is my blog.
-        </p>
-
-        {/* Interactive Toggles */}
-        <div className="space-y-4 mb-16">
-          <SectionToggle title="Things I Like">
-            <div className="flex flex-wrap gap-3">
-              {[
-                { icon: Trophy, label: "Football" },
-                { icon: Film, label: "Films" },
-                { icon: Activity, label: "Badminton" },
-                { icon: Cat, label: "Cats" },
-                { icon: Activity, label: "Running" },
-                { icon: PenTool, label: "Writing" },
-                { icon: Dumbbell, label: "Working Out" },
-                { icon: Palette, label: "Art" },
-                { icon: Globe, label: "Culture" },
-              ].map((item, i) => (
-                <span key={i} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium">
-                  <item.icon className="w-3.5 h-3.5" />
-                  {item.label}
-                </span>
-              ))}
-            </div>
-          </SectionToggle>
-          
-          <SectionToggle title="What You Can Expect Here">
-            <p>
-              Stuff about things I like, my thoughts on some topical news, film reviews, and random ramblings about whatever catches my attention. 
-              It's a digital garden of my interests.
-            </p>
-          </SectionToggle>
-        </div>
-      </header>
-
-      {/* Blog Posts Grid */}
-      <main className="px-4 md:px-6 max-w-7xl mx-auto">
-        <div className="flex items-center gap-4 mb-8 border-b border-white/10 pb-4">
-          <h2 className="text-3xl font-display text-white">Recent Posts</h2>
-          <div className="flex-1 h-px bg-white/10"></div>
-          <span className="text-sm font-mono text-primary/70">{posts?.length || 0} ENTRIES</span>
-        </div>
-
-        {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="h-64 bg-card/50 animate-pulse rounded-xl border border-white/5"></div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
-            {posts?.map((post) => (
-              <Link key={post.id} href={`/post/${post.id}`} className="group block h-full">
-                <article className="h-full bg-card rounded-xl overflow-hidden border border-white/10 transition-all duration-300 hover:border-primary hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 flex flex-col">
-                  {post.imageUrl && (
-                    <div className="aspect-[16/9] overflow-hidden bg-black/20">
-                      <img 
-                        src={post.imageUrl} 
-                        alt={post.title}
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
-                      />
-                    </div>
-                  )}
-                  <div className="p-6 flex flex-col flex-1">
-                    <div className="flex items-center justify-between mb-3 text-xs font-mono text-primary/70">
-                      <span>{format(new Date(post.createdAt), 'MMM d, yyyy')}</span>
-                      <div className="flex items-center gap-1">
-                        <Heart className="w-3 h-3 fill-current" />
-                        {post.likes}
-                      </div>
-                    </div>
-                    <h3 className="text-xl md:text-2xl font-display text-white mb-2 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
-                      {post.title}
-                    </h3>
-                    <p className="text-white/60 line-clamp-3 text-sm mb-6 flex-1">
-                      {post.content}
-                    </p>
-                    <div className="flex items-center text-primary text-sm font-bold uppercase tracking-wider mt-auto group-hover:translate-x-1 transition-transform">
-                      Read Post <ArrowRight className="ml-2 w-4 h-4" />
-                    </div>
-                  </div>
-                </article>
-              </Link>
-            ))}
-            
-            {posts?.length === 0 && (
-              <div className="col-span-full py-20 text-center border border-dashed border-white/10 rounded-xl">
-                <p className="text-white/40 font-mono">No posts yet. Time to write something!</p>
+    <div className="min-h-screen p-4 md:p-8 flex flex-col items-center">
+      <div className="w-full max-w-lg space-y-8">
+        {/* Header Section */}
+        <header className="text-center space-y-2 pt-12">
+          <div className="flex items-center justify-center gap-2 group min-h-[40px]">
+            {editing === 'intro' ? (
+              <div className="flex gap-2 items-center">
+                <Input 
+                  defaultValue={blogInfo?.intro} 
+                  id="intro-input"
+                  autoFocus
+                  className="bg-card/50 border-primary/50 text-center lowercase h-8 text-sm" 
+                  onKeyDown={(e) => e.key === 'Enter' && handleUpdate('intro', e.currentTarget.value)}
+                />
+                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleUpdate('intro', (document.getElementById('intro-input') as HTMLInputElement).value)}>
+                  <Save className="h-4 w-4" />
+                </Button>
+                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditing(null)}>
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
+            ) : (
+              <>
+                <p className="text-base lowercase">{blogInfo?.intro || "yo i'm shahaan :) "}</p>
+                {user && <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setEditing('intro')}><Edit2 className="h-3 w-3" /></Button>}
+              </>
             )}
           </div>
-        )}
-      </main>
+        </header>
 
-      {/* Footer */}
-      <footer className="mt-24 border-t border-white/10 py-12 text-center">
-        <div className="max-w-4xl mx-auto px-4">
-          <p className="text-white/40 mb-4 font-mono text-sm">Follow me on Letterboxd</p>
-          <a 
-            href="https://letterboxd.com/meowpeeps" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-primary hover:text-white transition-colors text-lg font-display tracking-wide"
+        {/* Action Buttons */}
+        <div className="flex flex-wrap justify-center gap-4">
+          <Button 
+            variant={showLikes ? "default" : "outline"} 
+            className={`small-button ${showLikes ? 'bg-accent text-accent-foreground' : 'bg-accent/20 border-accent/40 text-accent'} lowercase`}
+            onClick={() => setShowLikes(!showLikes)}
           >
-            @meowpeeps <ExternalLink className="w-4 h-4" />
-          </a>
+            things i like
+          </Button>
+          <Button 
+            variant={showExpect ? "default" : "outline"} 
+            className={`small-button ${showExpect ? 'bg-primary text-primary-foreground' : 'bg-primary/20 border-primary/40 text-primary'} lowercase`}
+            onClick={() => setShowExpect(!showExpect)}
+          >
+            what you can expect
+          </Button>
         </div>
-      </footer>
 
-      {/* Admin Actions */}
-      {user && <CreatePostModal />}
+        {/* Collapsible Content */}
+        <div className="space-y-4">
+          {showLikes && (
+            <Card className="bg-card/40 backdrop-blur-sm border-accent/30 rounded-2xl overflow-hidden">
+              <CardContent className="p-4 relative group">
+                {editing === 'likes' ? (
+                  <div className="space-y-2">
+                    <Textarea 
+                      defaultValue={blogInfo?.thingsILike} 
+                      id="likes-input"
+                      autoFocus
+                      className="bg-transparent border-accent/50 lowercase min-h-[100px] text-xs" 
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase" onClick={() => handleUpdate('thingsILike', (document.getElementById('likes-input') as HTMLTextAreaElement).value)}>save</Button>
+                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase" onClick={() => setEditing(null)}>cancel</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-xs leading-relaxed lowercase">{blogInfo?.thingsILike}</p>
+                    {user && <Button size="icon" variant="ghost" className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => setEditing('likes')}><Edit2 className="h-3 w-3" /></Button>}
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {showExpect && (
+            <Card className="bg-card/40 backdrop-blur-sm border-primary/30 rounded-2xl overflow-hidden">
+              <CardContent className="p-4 relative group">
+                {editing === 'expect' ? (
+                  <div className="space-y-2">
+                    <Textarea 
+                      defaultValue={blogInfo?.expect} 
+                      id="expect-input"
+                      autoFocus
+                      className="bg-transparent border-primary/50 lowercase min-h-[100px] text-xs" 
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase" onClick={() => handleUpdate('expect', (document.getElementById('expect-input') as HTMLTextAreaElement).value)}>save</Button>
+                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase" onClick={() => setEditing(null)}>cancel</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-xs leading-relaxed lowercase">{blogInfo?.expect}</p>
+                    {user && <Button size="icon" variant="ghost" className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => setEditing('expect')}><Edit2 className="h-3 w-3" /></Button>}
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Blog Posts */}
+        <div className="space-y-6 pt-8">
+          <div className="flex items-center justify-between px-2">
+            <h2 className="text-sm opacity-50 lowercase">recent posts</h2>
+            {user && <CreatePostModal />}
+          </div>
+          {posts?.map((post: any) => (
+            <Link key={post.id} href={`/post/${post.id}`}>
+              <Card className="bg-card/30 hover:bg-card/50 transition-all cursor-pointer border-primary/10 rounded-2xl overflow-hidden group">
+                {post.imageUrl && (
+                  <div className="h-32 overflow-hidden">
+                    <img src={post.imageUrl} className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity" alt={post.title} />
+                  </div>
+                )}
+                <CardContent className="p-4 space-y-2">
+                  <h2 className="text-base font-normal lowercase">{post.title}</h2>
+                  <p className="text-[10px] text-muted-foreground line-clamp-2 lowercase">{post.content}</p>
+                  <div className="flex gap-4 pt-1 text-[8px] text-muted-foreground uppercase opacity-50">
+                    <span className="flex items-center gap-1"><Heart className="h-2 w-2" /> {post.likes}</span>
+                    <span className="flex items-center gap-1"><MessageCircle className="h-2 w-2" /> comments</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+          {posts?.length === 0 && (
+            <p className="text-center text-xs opacity-30 py-8 lowercase">no posts yet... write something soon!</p>
+          )}
+        </div>
+
+        {/* Footer */}
+        <footer className="text-center pt-20 pb-12 group relative">
+          {editing === 'letterboxd' ? (
+            <div className="flex gap-2 items-center justify-center">
+              <Input 
+                defaultValue={blogInfo?.letterboxd} 
+                id="lb-input"
+                autoFocus
+                className="bg-card/50 border-accent/50 text-center lowercase h-8 max-w-[150px] text-xs" 
+                onKeyDown={(e) => e.key === 'Enter' && handleUpdate('letterboxd', e.currentTarget.value)}
+              />
+              <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleUpdate('letterboxd', (document.getElementById('lb-input') as HTMLInputElement).value)}>
+                <Save className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center gap-2">
+              <a 
+                href={`https://letterboxd.com/${blogInfo?.letterboxd?.replace('@', '')}`} 
+                target="_blank" 
+                className="text-accent hover:underline text-xs lowercase"
+              >
+                letterboxd: {blogInfo?.letterboxd}
+              </a>
+              {user && <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => setEditing('letterboxd')}><Edit2 className="h-3 w-3" /></Button>}
+            </div>
+          )}
+        </footer>
+      </div>
     </div>
   );
 }
