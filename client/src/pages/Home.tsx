@@ -67,21 +67,23 @@ export default function Home() {
                   defaultValue={blogInfo?.intro} 
                   id="intro-input"
                   autoFocus
-                  className="bg-card/50 border-primary/50 text-center lowercase h-8 text-sm" 
+                  className="bg-card border-primary/50 text-center lowercase h-8 text-sm opacity-100" 
                   onKeyDown={(e) => e.key === 'Enter' && handleUpdate('intro', e.currentTarget.value)}
                 />
-                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleUpdate('intro', (document.getElementById('intro-input') as HTMLInputElement).value)}>
+                <Button size="icon" variant="ghost" className="h-8 w-8 bg-primary text-primary-foreground opacity-100" onClick={() => handleUpdate('intro', (document.getElementById('intro-input') as HTMLInputElement).value)}>
                   <Save className="h-4 w-4" />
                 </Button>
-                <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditing(null)}>
+                <Button size="icon" variant="ghost" className="h-8 w-8 bg-muted text-muted-foreground opacity-100" onClick={() => setEditing(null)}>
                   <X className="h-4 w-4" />
                 </Button>
               </div>
             ) : (
-              <>
-                <p className="text-base lowercase">{blogInfo?.intro || "yo i'm shahaan :) "}</p>
-                {user && <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setEditing('intro')}><Edit2 className="h-3 w-3" /></Button>}
-              </>
+              <div className="flex items-center gap-2">
+                <div className="small-button bg-card text-foreground border-2 border-primary/30 px-4 py-2 text-base lowercase opacity-100 shadow-xl">
+                  {blogInfo?.intro || "yo i'm shahaan :) "}
+                </div>
+                {user && <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity bg-primary/20" onClick={() => setEditing('intro')}><Edit2 className="h-3 w-3" /></Button>}
+              </div>
             )}
           </div>
         </header>
@@ -190,30 +192,30 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <footer className="text-center pt-20 pb-12 group relative">
+        <footer className="text-center pt-20 pb-12 group relative flex justify-center">
           {editing === 'letterboxd' ? (
             <div className="flex gap-2 items-center justify-center">
               <Input 
                 defaultValue={blogInfo?.letterboxd} 
                 id="lb-input"
                 autoFocus
-                className="bg-card/50 border-accent/50 text-center lowercase h-8 max-w-[150px] text-xs" 
+                className="bg-card border-accent/50 text-center lowercase h-8 max-w-[150px] text-xs opacity-100" 
                 onKeyDown={(e) => e.key === 'Enter' && handleUpdate('letterboxd', e.currentTarget.value)}
               />
-              <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleUpdate('letterboxd', (document.getElementById('lb-input') as HTMLInputElement).value)}>
+              <Button size="icon" variant="ghost" className="h-8 w-8 bg-accent text-accent-foreground opacity-100" onClick={() => handleUpdate('letterboxd', (document.getElementById('lb-input') as HTMLInputElement).value)}>
                 <Save className="h-4 w-4" />
               </Button>
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
               <a 
-                href={`https://letterboxd.com/${blogInfo?.letterboxd?.replace('@', '')}`} 
+                href="https://boxd.it/dnpVb" 
                 target="_blank" 
-                className="text-accent hover:underline text-xs lowercase"
+                className="small-button bg-card text-accent border-2 border-accent/30 px-4 py-2 text-xs lowercase opacity-100 shadow-xl hover:bg-card/90"
               >
                 letterboxd: {blogInfo?.letterboxd}
               </a>
-              {user && <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => setEditing('letterboxd')}><Edit2 className="h-3 w-3" /></Button>}
+              {user && <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover:opacity-100 bg-accent/20" onClick={() => setEditing('letterboxd')}><Edit2 className="h-3 w-3" /></Button>}
             </div>
           )}
         </footer>
