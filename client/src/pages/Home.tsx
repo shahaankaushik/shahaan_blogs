@@ -165,7 +165,9 @@ export default function Home() {
         {/* Blog Posts */}
         <div className="space-y-6 pt-8">
           <div className="flex items-center justify-between px-2">
-            <h2 className="text-sm opacity-50 lowercase">recent posts</h2>
+            <div className="small-button bg-card/80 backdrop-blur-sm border border-primary/20 px-3 py-1 text-[10px] text-muted-foreground lowercase shadow-sm">
+              recent posts
+            </div>
             {user && <CreatePostModal />}
           </div>
           {posts?.map((post: any) => (

@@ -77,17 +77,19 @@ export default function PostDetail() {
     <div className="min-h-screen pb-20 p-4 md:p-8 flex flex-col items-center">
       <div className="w-full max-w-2xl space-y-8">
         <nav className="flex items-center justify-between">
-          <Link href="/" className="flex items-center text-muted-foreground hover:text-primary transition-colors lowercase">
-            <ArrowLeft className="w-4 h-4 mr-2" /> back
+          <Link href="/" className="small-button bg-card/80 backdrop-blur-sm border border-primary/20 px-3 py-1 flex items-center text-muted-foreground hover:text-primary transition-colors lowercase shadow-sm">
+            <ArrowLeft className="w-3 h-3 mr-1" /> back
           </Link>
-          <div className="lowercase text-xs opacity-50">shahaan's blog</div>
+          <div className="small-button bg-card/80 backdrop-blur-sm border border-primary/20 px-3 py-1 lowercase text-[10px] text-muted-foreground shadow-sm">shahaan's blog</div>
         </nav>
 
         <main className="space-y-8">
           <header className="text-center space-y-4">
             <h1 className="text-3xl font-normal leading-tight lowercase">{post.title}</h1>
-            <div className="text-[10px] opacity-50 lowercase">
-              {format(new Date(post.createdAt), 'MMMM d, yyyy')}
+            <div className="flex justify-center">
+              <div className="small-button bg-card/80 backdrop-blur-sm border border-primary/20 px-3 py-1 text-[10px] text-muted-foreground lowercase shadow-sm">
+                {format(new Date(post.createdAt), 'MMMM d, yyyy')}
+              </div>
             </div>
             
             {post.imageUrl && (
@@ -130,7 +132,11 @@ export default function PostDetail() {
           </div>
 
           <section className="space-y-6 pt-8 border-t border-primary/10">
-            <h3 className="text-lg lowercase">comments ({comments?.length || 0})</h3>
+            <div className="flex justify-start">
+              <div className="small-button bg-card/80 backdrop-blur-sm border border-primary/20 px-4 py-1.5 text-sm lowercase shadow-sm">
+                comments ({comments?.length || 0})
+              </div>
+            </div>
             
             <div className="space-y-4">
               {comments?.map((comment) => (
