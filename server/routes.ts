@@ -12,6 +12,23 @@ export async function registerRoutes(
   // Setup Auth
   setupAuth(app);
 
+  app.get(api.blogInfo.get.path, async (req, res) => {
+    const info = await storage.getBlogInfo();
+    res.json(info);
+  });
+
+  app.put(api.blogInfo.update.path, async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const parsed = insertBlogInfoSchema.partial().safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json(parsed.error);
+    }
+    const info = await storage.updateBlogInfo(parsed.data);
+    res.json(info);
+  });
+
   app.get(api.posts.list.path, async (req, res) => {
     const posts = await storage.getPosts();
     res.json(posts);

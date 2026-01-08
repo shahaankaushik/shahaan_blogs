@@ -1,7 +1,25 @@
 import { z } from "zod";
-import { insertPostSchema, insertCommentSchema, posts, comments } from "./schema";
+import { insertPostSchema, insertCommentSchema, insertBlogInfoSchema, posts, comments, blogInfo } from "./schema";
 
 export const api = {
+  blogInfo: {
+    get: {
+      method: "GET" as const,
+      path: "/api/blog-info",
+      responses: {
+        200: z.custom<typeof blogInfo.$inferSelect>(),
+      },
+    },
+    update: {
+      method: "PUT" as const,
+      path: "/api/blog-info",
+      input: insertBlogInfoSchema.partial(),
+      responses: {
+        200: z.custom<typeof blogInfo.$inferSelect>(),
+        401: z.object({ message: z.string() }),
+      },
+    },
+  },
   posts: {
     list: {
       method: "GET" as const,

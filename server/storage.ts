@@ -1,4 +1,4 @@
-import { users, posts, comments, type User, type InsertUser, type Post, type InsertPost, type Comment, type InsertComment } from "@shared/schema";
+import { users, posts, comments, blogInfo, type User, type InsertUser, type Post, type InsertPost, type Comment, type InsertComment, type BlogInfo, type InsertBlogInfo } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
 
@@ -14,6 +14,9 @@ export interface IStorage {
 
   getComments(postId: number): Promise<Comment[]>;
   createComment(comment: InsertComment): Promise<Comment>;
+
+  getBlogInfo(): Promise<BlogInfo>;
+  updateBlogInfo(info: Partial<InsertBlogInfo>): Promise<BlogInfo>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -64,6 +67,24 @@ export class DatabaseStorage implements IStorage {
   async createComment(insertComment: InsertComment): Promise<Comment> {
     const [comment] = await db.insert(comments).values(insertComment).returning();
     return comment;
+  }
+
+  async getBlogInfo(): Promise<BlogInfo> {
+    const [info] = await db.select().from(blogInfo);
+    if (!info) {
+      const [newInfo] = await db.insert(blogInfo).values({}).returning();
+      return newInfo;
+    }
+    return info;
+  }
+
+  async updateBlogInfo(updates: Partial<InsertBlogInfo>): Promise<BlogInfo> {
+    const info = await this.getBlogInfo();
+    const [updated] = await db.update(blogInfo)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(blogInfo.id, info.id))
+      .returning();
+    return updated;
   }
 }
 

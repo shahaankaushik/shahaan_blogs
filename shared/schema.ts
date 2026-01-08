@@ -1,10 +1,19 @@
-import { pgTable, text, serial, integer, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, boolean, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { users } from "./models/auth";
 
 export * from "./models/auth";
+
+export const blogInfo = pgTable("blog_info", {
+  id: serial("id").primaryKey(),
+  intro: text("intro").default("yo i'm shahaan :)").notNull(),
+  thingsILike: text("things_i_like").default("football, films, badminton, cats, running, writing, working out, art, culture").notNull(),
+  expect: text("expect").default("stuff about things i like, my thoughts on some topical news, film reviews etc").notNull(),
+  letterboxd: text("letterboxd").default("@meowpeeps").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 
 export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),
@@ -36,12 +45,14 @@ export const commentsRelations = relations(comments, ({ one }) => ({
 
 export const insertPostSchema = createInsertSchema(posts).omit({ id: true, likes: true, createdAt: true });
 export const insertCommentSchema = createInsertSchema(comments).omit({ id: true, createdAt: true });
+export const insertBlogInfoSchema = createInsertSchema(blogInfo).omit({ id: true, updatedAt: true });
 
 export type Post = typeof posts.$inferSelect;
 export type InsertPost = z.infer<typeof insertPostSchema>;
 export type Comment = typeof comments.$inferSelect;
 export type InsertComment = z.infer<typeof insertCommentSchema>;
+export type BlogInfo = typeof blogInfo.$inferSelect;
+export type InsertBlogInfo = z.infer<typeof insertBlogInfoSchema>;
 
-// Aliases for compatibility if needed, though auth.ts provides UpsertUser
 import { type UpsertUser } from "./models/auth";
 export type InsertUser = UpsertUser;
