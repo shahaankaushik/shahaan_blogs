@@ -14,6 +14,7 @@ export interface IStorage {
 
   getComments(postId: number): Promise<Comment[]>;
   createComment(comment: InsertComment): Promise<Comment>;
+  deleteComment(id: number): Promise<void>;
 
   getBlogInfo(): Promise<BlogInfo>;
   updateBlogInfo(info: Partial<InsertBlogInfo>): Promise<BlogInfo>;
@@ -67,6 +68,10 @@ export class DatabaseStorage implements IStorage {
   async createComment(insertComment: InsertComment): Promise<Comment> {
     const [comment] = await db.insert(comments).values(insertComment).returning();
     return comment;
+  }
+
+  async deleteComment(id: number): Promise<void> {
+    await db.delete(comments).where(eq(comments.id, id));
   }
 
   async getBlogInfo(): Promise<BlogInfo> {

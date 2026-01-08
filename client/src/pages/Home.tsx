@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, buildUrl } from "@/lib/api";
 import { queryClient } from "@/lib/queryClient";
 import { useState } from "react";
@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
-import { Edit2, Save, X, Heart, MessageCircle, Plus } from "lucide-react";
+import { Edit2, Save, X, Heart, MessageCircle, Mail } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "wouter";
 import { CreatePostModal } from "@/components/CreatePostModal";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
   const { user } = useAuth();
@@ -179,7 +180,9 @@ export default function Home() {
                   <h2 className="text-base font-normal lowercase">{post.title}</h2>
                   <p className="text-[10px] text-muted-foreground line-clamp-2 lowercase">{post.content}</p>
                   <div className="flex gap-4 pt-1 text-[8px] text-muted-foreground uppercase opacity-70">
-                    <span className="flex items-center gap-1"><Heart className="h-2 w-2" /> {post.likes}</span>
+                    {user && (
+                      <span className="flex items-center gap-1"><Heart className="h-2 w-2" /> {post.likes}</span>
+                    )}
                     <span className="flex items-center gap-1"><MessageCircle className="h-2 w-2" /> comments</span>
                   </div>
                 </CardContent>
@@ -192,7 +195,7 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <footer className="text-center pt-20 pb-12 group relative flex justify-center">
+        <footer className="text-center pt-20 pb-12 group relative flex flex-col items-center gap-4">
           {editing === 'letterboxd' ? (
             <div className="flex gap-2 items-center justify-center">
               <Input 
@@ -218,6 +221,13 @@ export default function Home() {
               {user && <Button size="icon" variant="ghost" className="h-6 w-6 opacity-0 group-hover:opacity-100 bg-accent/20" onClick={() => setEditing('letterboxd')}><Edit2 className="h-3 w-3" /></Button>}
             </div>
           )}
+          
+          <a 
+            href="mailto:shahaanpictures@gmail.com"
+            className="small-button bg-card text-primary border-2 border-primary/30 px-4 py-2 text-xs lowercase opacity-100 shadow-xl hover:bg-card/90 flex items-center gap-2"
+          >
+            <Mail className="h-3 w-3" /> write me an email
+          </a>
         </footer>
       </div>
     </div>
