@@ -90,14 +90,14 @@ export default function Home() {
         <div className="flex flex-wrap justify-center gap-4">
           <Button 
             variant={showLikes ? "default" : "outline"} 
-            className={`small-button ${showLikes ? 'bg-accent text-accent-foreground' : 'bg-accent/20 border-accent/40 text-accent'} lowercase`}
+            className={`small-button ${showLikes ? 'bg-accent text-accent-foreground opacity-100' : 'bg-accent border-accent/40 text-accent-foreground opacity-100'} lowercase`}
             onClick={() => setShowLikes(!showLikes)}
           >
             things i like
           </Button>
           <Button 
             variant={showExpect ? "default" : "outline"} 
-            className={`small-button ${showExpect ? 'bg-primary text-primary-foreground' : 'bg-primary/20 border-primary/40 text-primary'} lowercase`}
+            className={`small-button ${showExpect ? 'bg-primary text-primary-foreground opacity-100' : 'bg-primary border-primary/40 text-primary-foreground opacity-100'} lowercase`}
             onClick={() => setShowExpect(!showExpect)}
           >
             what you can expect
@@ -107,7 +107,7 @@ export default function Home() {
         {/* Collapsible Content */}
         <div className="space-y-4">
           {showLikes && (
-            <Card className="bg-card/40 backdrop-blur-sm border-accent/30 rounded-2xl overflow-hidden">
+            <Card className="bg-card backdrop-blur-md border-accent/50 rounded-2xl overflow-hidden shadow-2xl">
               <CardContent className="p-4 relative group">
                 {editing === 'likes' ? (
                   <div className="space-y-2">
@@ -115,11 +115,11 @@ export default function Home() {
                       defaultValue={blogInfo?.thingsILike} 
                       id="likes-input"
                       autoFocus
-                      className="bg-transparent border-accent/50 lowercase min-h-[100px] text-xs" 
+                      className="bg-background border-accent/50 lowercase min-h-[100px] text-xs opacity-100" 
                     />
                     <div className="flex justify-end gap-2">
-                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase" onClick={() => handleUpdate('thingsILike', (document.getElementById('likes-input') as HTMLTextAreaElement).value)}>save</Button>
-                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase" onClick={() => setEditing(null)}>cancel</Button>
+                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase bg-accent text-accent-foreground opacity-100" onClick={() => handleUpdate('thingsILike', (document.getElementById('likes-input') as HTMLTextAreaElement).value)}>save</Button>
+                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase bg-muted text-muted-foreground opacity-100" onClick={() => setEditing(null)}>cancel</Button>
                     </div>
                   </div>
                 ) : (
@@ -133,7 +133,7 @@ export default function Home() {
           )}
 
           {showExpect && (
-            <Card className="bg-card/40 backdrop-blur-sm border-primary/30 rounded-2xl overflow-hidden">
+            <Card className="bg-card backdrop-blur-md border-primary/50 rounded-2xl overflow-hidden shadow-2xl">
               <CardContent className="p-4 relative group">
                 {editing === 'expect' ? (
                   <div className="space-y-2">
@@ -141,11 +141,11 @@ export default function Home() {
                       defaultValue={blogInfo?.expect} 
                       id="expect-input"
                       autoFocus
-                      className="bg-transparent border-primary/50 lowercase min-h-[100px] text-xs" 
+                      className="bg-background border-primary/50 lowercase min-h-[100px] text-xs opacity-100" 
                     />
                     <div className="flex justify-end gap-2">
-                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase" onClick={() => handleUpdate('expect', (document.getElementById('expect-input') as HTMLTextAreaElement).value)}>save</Button>
-                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase" onClick={() => setEditing(null)}>cancel</Button>
+                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase bg-primary text-primary-foreground opacity-100" onClick={() => handleUpdate('expect', (document.getElementById('expect-input') as HTMLTextAreaElement).value)}>save</Button>
+                      <Button size="sm" variant="ghost" className="h-8 text-[10px] lowercase bg-muted text-muted-foreground opacity-100" onClick={() => setEditing(null)}>cancel</Button>
                     </div>
                   </div>
                 ) : (
@@ -167,16 +167,16 @@ export default function Home() {
           </div>
           {posts?.map((post: any) => (
             <Link key={post.id} href={`/post/${post.id}`}>
-              <Card className="bg-card/30 hover:bg-card/50 transition-all cursor-pointer border-primary/10 rounded-2xl overflow-hidden group">
+              <Card className="bg-card hover:bg-card/90 transition-all cursor-pointer border-primary/30 rounded-2xl overflow-hidden group shadow-xl">
                 {post.imageUrl && (
                   <div className="h-32 overflow-hidden">
-                    <img src={post.imageUrl} className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity" alt={post.title} />
+                    <img src={post.imageUrl} className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" alt={post.title} />
                   </div>
                 )}
                 <CardContent className="p-4 space-y-2">
                   <h2 className="text-base font-normal lowercase">{post.title}</h2>
                   <p className="text-[10px] text-muted-foreground line-clamp-2 lowercase">{post.content}</p>
-                  <div className="flex gap-4 pt-1 text-[8px] text-muted-foreground uppercase opacity-50">
+                  <div className="flex gap-4 pt-1 text-[8px] text-muted-foreground uppercase opacity-70">
                     <span className="flex items-center gap-1"><Heart className="h-2 w-2" /> {post.likes}</span>
                     <span className="flex items-center gap-1"><MessageCircle className="h-2 w-2" /> comments</span>
                   </div>

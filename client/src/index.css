@@ -8,7 +8,7 @@
   /* Lo-fi / Cute Aesthetic */
   /* Deep Purple/Navy */
   --background: 260 40% 10%;
-  --foreground: 300 20% 90%;
+  --foreground: 300 20% 95%;
 
   /* Neon Cyan */
   --primary: 180 100% 50%;
@@ -18,14 +18,14 @@
   --accent: 330 100% 70%;
   --accent-foreground: 260 40% 10%;
 
-  /* Muted Purple */
-  --card: 260 30% 15%;
-  --card-foreground: 300 20% 90%;
+  /* Muted Purple - Increased opacity for better clarity */
+  --card: 260 30% 12%;
+  --card-foreground: 300 20% 95%;
   
-  --muted: 260 20% 25%;
-  --muted-foreground: 300 10% 70%;
+  --muted: 260 20% 20%;
+  --muted-foreground: 300 10% 75%;
 
-  --border: 260 20% 30%;
+  --border: 260 20% 40%;
   --input: 260 20% 30%;
   --ring: 180 100% 50%;
 
@@ -45,6 +45,7 @@
     background-attachment: fixed;
     background-position: center;
     text-transform: lowercase;
+    @apply overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -54,10 +55,10 @@
 
 @layer utilities {
   .cute-card {
-    @apply bg-card/80 backdrop-blur-sm border-2 border-primary/30 rounded-2xl p-4 shadow-lg;
+    @apply bg-card/95 backdrop-blur-md border-2 border-primary/40 rounded-2xl p-4 shadow-2xl;
   }
   
   .small-button {
-    @apply px-3 py-1 text-xs rounded-full transition-all hover:scale-105 active:scale-95;
+    @apply px-3 py-1 text-xs rounded-full transition-all hover:scale-105 active:scale-95 opacity-100 bg-opacity-100 !important;
   }
 }

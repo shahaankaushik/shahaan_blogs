@@ -82,7 +82,7 @@ export default function PostDetail() {
             )}
           </header>
 
-          <article className="cute-card space-y-4">
+          <article className="cute-card !bg-card p-6 space-y-4">
             {post.content.split('\n').map((paragraph, i) => (
               <p key={i} className="text-sm leading-relaxed lowercase">{paragraph}</p>
             ))}
